@@ -111,7 +111,7 @@ const motion = Object.assign({}, es, {
         preserveModules: false,
         dir: undefined,
     }),
-    plugins: [...sizePlugins],
+    plugins: [...sizePlugins, visualizer()],
     external: ["react", "react-dom"],
 })
 
@@ -122,7 +122,7 @@ const m = Object.assign({}, es, {
         preserveModules: false,
         dir: undefined,
     }),
-    plugins: [...sizePlugins, visualizer()],
+    plugins: [...sizePlugins],
     external: ["react", "react-dom"],
 })
 
