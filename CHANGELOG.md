@@ -4,6 +4,22 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [8.0.0] Unreleased
+
+### Added
+
+-   `mSVG` component added for minimal SVG elements.
+
+### Changed
+
+-   `m` component now only supports HTML elements.
+
+## [7.2.1] 2022-08-23
+
+### Added
+
+-   Various filesize reductions.
+
 ## [7.2.1] 2022-08-23
 
 ### Added
