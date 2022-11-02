@@ -1,13 +1,10 @@
 import { EventInfo } from "../events/types"
-import { isTouchEvent, isMouseEvent } from "./utils/event-type"
 import { extractEventInfo } from "../events/event-info"
 import sync, { getFrameData, cancelSync } from "framesync"
 import { secondsToMilliseconds } from "../utils/time-conversion"
 import { addPointerEvent } from "../events/use-pointer-event"
 import { distance, pipe } from "popmotion"
 import { Point, TransformPoint } from "../projection/geometry/types"
-
-export type AnyPointerEvent = MouseEvent | TouchEvent | PointerEvent
 
 /**
  * Passed in to pan event handlers like `onPan` the `PanInfo` object contains
@@ -113,12 +110,12 @@ export class PanSession {
     /**
      * @internal
      */
-    private startEvent: AnyPointerEvent | null = null
+    private startEvent: PointerEvent | null = null
 
     /**
      * @internal
      */
-    private lastMoveEvent: AnyPointerEvent | null = null
+    private lastMoveEvent: PointerEvent | null = null
 
     /**
      * @internal
@@ -141,12 +138,12 @@ export class PanSession {
     private removeListeners: Function
 
     constructor(
-        event: AnyPointerEvent,
+        event: PointerEvent,
         handlers: Partial<PanSessionHandlers>,
         { transformPagePoint }: PanSessionOptions = {}
     ) {
         // If we have more than one touch, don't start detecting this gesture
-        if (isTouchEvent(event) && event.touches.length > 1) return
+        if (!event.isPrimary) return
 
         this.handlers = handlers
         this.transformPagePoint = transformPagePoint
@@ -198,12 +195,12 @@ export class PanSession {
         onMove && onMove(this.lastMoveEvent, info)
     }
 
-    private handlePointerMove = (event: AnyPointerEvent, info: EventInfo) => {
+    private handlePointerMove = (event: PointerEvent, info: EventInfo) => {
         this.lastMoveEvent = event
         this.lastMoveEventInfo = transformPoint(info, this.transformPagePoint)
 
         // Because Safari doesn't trigger mouseup events when it's above a `<select>`
-        if (isMouseEvent(event) && event.buttons === 0) {
+        if (event.isPrimary) {
             this.handlePointerUp(event, info)
             return
         }
@@ -212,7 +209,7 @@ export class PanSession {
         sync.update(this.updatePoint, true)
     }
 
-    private handlePointerUp = (event: AnyPointerEvent, info: EventInfo) => {
+    private handlePointerUp = (event: PointerEvent, info: EventInfo) => {
         this.end()
 
         const { onEnd, onSessionEnd } = this.handlers
